@@ -1,0 +1,9 @@
+{% extends 'admin/change_form.html' %}
+
+{% block object-tools %}
+    {{ block.super }}
+    <div class="submit-row">
+            <input type="submit" value="Price hike 10k" name="_price_hike_10k">
+            <input type="submit" value="Price reduce 10k" name="_price_reduce_10k">
+    </div>
+{% endblock %}
