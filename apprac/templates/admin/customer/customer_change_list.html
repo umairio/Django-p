@@ -1,0 +1,18 @@
+<!-- apprac/templates/admin/customer/change_list.html -->
+{% extends 'admin/change_list.html' %}
+
+{% block object-tools %}
+<ul class="object-tools">
+    <li>
+        <a href="{% url 'admin:fake_data' %}" class="addlink">
+            generate fake data
+        </a>
+    </li>
+    <li>
+        <a href="/admin/home/customer/add/" class="addlink">
+            Add customer
+        </a>
+    </li>
+</ul>
+{{ block.super }}
+{% endblock %}
