@@ -32,8 +32,8 @@ class PhoneField(models.Field):
     def validate(self, value, model_instance):
         """Check if value consists only of valid number"""
         super().validate(value, model_instance)
-        ver_pattern = re.compile(r'^\+92+[0-9-]$')
-        match = ver_pattern.match(value)
+        phone_pattern = re.compile(r'^\+923[0-9]{9}$')
+        match = phone_pattern.match(value)
         if not bool(match):
             raise ValidationError(
                 _(
