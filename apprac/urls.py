@@ -1,9 +1,10 @@
 from django.urls import path
-from .views import home, home2
+from .views import index, ibase, contact
 
 
 urlpatterns = [
-   path('', home, name='index'),
-   path('home', home, name='index'),
-   path('home2/', home2, name='home2')
+   path('', index, name='index'),
+   path('home', index, name='index'),
+   path('home2/', ibase, name='ibase'),
+   path('contact', contact, name='contact')
 ]

@@ -62,7 +62,21 @@ class Profile(models.Model):
     
     def __str__(self):
         return self.full_name
-    
+
+class ProfileProxy(Profile):
+    class Meta:
+        proxy = True
+
+    def is_assigned_to_task(self):
+        assigned_tasks = self.task_set.all()
+        return ', '.join(task.title for task in assigned_tasks) if assigned_tasks else None
+
+    def is_member_of_project(self):
+        member_of_projects = self.project_set.all()
+        return ', '.join(project.title for project in member_of_projects) if member_of_projects else None
+
+
+
 class Project(models.Model):
     title = models.CharField(max_length=50)
     description = models.TextField(blank=True)
