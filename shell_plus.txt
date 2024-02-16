@@ -1,0 +1,113 @@
+>>> profile=Profile.objects.get(id = 100)
+>>> profile.user
+>>> profile.user.name
+'Jacob Murphy'
+>>> profile.user.active
+True
+RETRIEVING SINGLE objects
+
+>>> projects = Project.objects.filter(task__assignee=100)
+>>> print(projects)
+<QuerySet [<Project: Project - market>, <Project: Project - market>]>
+RETRIEVING project assigned to user id = 100
+
+>>> projects = Project.objects.filter(title__in=["Project - face", "Project - mean"])
+>>> projects
+<QuerySet [<Project: Project - face>, <Project: Project - mean>, <Project: Project - face>]>
+FIlTERING projects that are in list
+
+>>> tasks = Task.objects.filter(title__icontains="by")
+>>> tasks
+<QuerySet [<Task: Task - by>]>
+FIlTERING task that contains word 'by'
+
+>>> tasks = Task.objects.filter(title__icontains="rac")
+>>> tasks
+<QuerySet [<Task: Task - practice>, <Task: Task - character>, <Task: Task - race>, <Task: Task - practice>]>
+FIlTERING task that contains word 'rac'
+
+>>> projects = Project.objects.filter(description__isnull=True)
+>>> projects
+<QuerySet []>
+No project have null decription
+
+>>> projects = Project.objects.filter(start_date__lte=timezone.now())
+>>> projects
+<QuerySet [<Project: Project - campaign>, <Project: Project - month>, <Project: Project - number>, <Project: Project - account>, <Project: Project - ever>, <Project: Project - enough>, <Project: Project - throughout>, <Project: Project - hold>, <Project: Project - good>, <Project: Project - worry>, <Project: Project - single>, <Project: Project - behavior>, <Project: Project - plan>, <Project: Project - lose>, <Project: Project - court>, <Project: Project - serious>, <Project: Project - TV>, <Project: Project - market>, <Project: Project - bad>, <Project: Project - good>, '...(remaining elements truncated)...']>
+project that started before today
+
+>>> phone=Profile.objects.filter(id__gte=23)
+>>> phone
+<QuerySet [<Profile: Jennifer Murphy - manager>, <Profile: Jose Hughes - qa>, <Profile: Sandy Martinez - developer>, <Profile: Kathy Barker - developer>, <Profile: Travis Thomas - qa>, <Profile: Debbie Smith - qa>, <Profile: Jeffrey Nelson - manager>, <Profile: Amanda Fisher - qa>, <Profile: Eric Smith - developer>, <Profile: Andrew Schwartz - manager>, <Profile: Barry Anderson - qa>, <Profile: Katrina Knapp - developer>, <Profile: Sophia Gilbert - qa>, <Profile: Lindsey Jones - manager>, <Profile: Michael Thomas DDS - developer>, <Profile: Lucas Hanson - qa>, <Profile: Martin Moore - developer>, <Profile: Bethany Anderson - developer>, <Profile: Ronald Jones - manager>, <Profile: Nathaniel Jackson - qa>, '...(remaining elements truncated)...']>
+Roecords with Id greater than 23
+
+>>> phone=Profile.objects.filter(id__lte=60)
+>>> phone
+<QuerySet [<Profile: Sandy Martinez - developer>, <Profile: Kathy Barker - developer>, <Profile: Travis Thomas - qa>, <Profile: Debbie Smith - qa>, <Profile: Jeffrey Nelson - manager>, <Profile: Amanda Fisher - qa>, <Profile: Eric Smith - developer>, <Profile: Andrew Schwartz - manager>, <Profile: Barry Anderson - qa>, <Profile: Katrina Knapp - developer>]>
+Records with id less than 60
+
+>>> exists = Document.objects.filter(version="v2024.02.16a").exists()
+>>> exists
+False
+Checking if any document with this version exists or not
+
+>>> task_count = Task.objects.count()
+>>> task_count
+465
+counting all tasks
+
+>>> project = 'Project - loss'
+>>> p= Project.objects.get(title=project)
+>>> c=Task.objects.filter(project=p).count()
+>>> c
+3
+counting no. of tasks of 'Project - loss'
+
+>>> phone = Profile.objects.filter(phone_no__icontains="0301")
+>>> phone
+<QuerySet [<Profile: Wanda Johnson - qa>]>
+profile which phone number that contains 0301
+
+>>> phone = Profile.objects.filter(phone_no__icontains="3012")
+>>> phone
+<QuerySet [<Profile: Yvonne Fields - developer>]>
+profile which phone number that contains 3012
+
+>>> count = Task.objects.filter(project=150).count()
+>>> count
+3
+number of tasks of project with id 150
+
+projects = Project.objects.exclude(title="Project 1")
+
+
+>>> projects = Project.objects.exclude(title__icontains="a")
+excluding projects that contain 'a' in title
+
+>>> Task.objects.filter(status=Task.Status.Open).update(status=Task.Status.Working)
+465
+filtered open tasks and updated their status to working
+
+>>> Task.objects.filter(title__icontains='j').delete()
+(2, {'apprac.Task_assignee': 1, 'apprac.Task': 1})
+deleted task that contain j in title
+
+>>> taks = [Task(title="Task", description="Description of task", status=Task.Status.Open, project=p), Task(title="Task2", descr
+iption="Description of task2", status=Task.Status.Open, project=p),]
+>>> Task.objects.bulk_create(taks)
+[<Task: Task>, <Task: Task2>]
+creating bulk tasks
+
+projects = Project.objects.order_by('-start_date')
+ordering by startdateqs1 = Project.objects.filter(title="Project 1")
+
+>>> qs1 = Project.objects.filter(title="Project - market")
+>>> qs2 = Project.objects.filter(description__icontains="project")
+>>> projects = qs1.intersection(qs2)
+>>> projects
+<QuerySet []>
+>>> qs2 = Project.objects.filter(description__icontains="roject")
+>>> projects = qs1.intersection(qs2)
+>>> projects
+<QuerySet []>
+Trying to find intersection

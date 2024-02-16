@@ -1,9 +1,5 @@
-{% extends 'base.html' %}
-{% load temptags %}
-
-{% block content %}
-    <p>This is inherited from home</p>
-    {% with string="UMAIR MATEEN" %}
-       <p>lower of {{ string }} is {% lower string %}.</p>
-    {% endwith %}
-{% endblock %}
+{% extends 'base.html' %} {% load temptags %} {% block content %}
+<p>This is inherited from home</p>
+{% with string="UMAIR MATEEN" %}
+<p>lower of {{ string }} is {% lower string %}.</p>
+{% endwith %} {% endblock %}
