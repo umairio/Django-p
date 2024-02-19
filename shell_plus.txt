@@ -106,8 +106,170 @@ ordering by startdateqs1 = Project.objects.filter(title="Project 1")
 >>> projects = qs1.intersection(qs2)
 >>> projects
 <QuerySet []>
->>> qs2 = Project.objects.filter(description__icontains="roject")
->>> projects = qs1.intersection(qs2)
+>>> qs2 = Project.objects.filter(description__icontains="project")
+>>> projects = qs1.union(qs2)
 >>> projects
-<QuerySet []>
-Trying to find intersection
+<QuerySet [<Project: Project - market>, <Project: Project - land>, <Project: Project - beautiful>]>
+Trying to find union and intersection
+
+>>> projects = Project.objects.filter(Q(title__icontains='Project') & Q(description__icontains='new'))
+>>> projects
+<QuerySet [<Project: Project - enough>, <Project: Project - safe>, <Project: Project - audience>, <Project: Project - none>, <Project: Project - star>, <Project: Project - already>, <Project: Project - sense>, <Project: Project - quite>, <Project: Project - attack>, <Project: Project - course>, <Project: Project - pick>, <Project: Project - significant>, <Project: Project - institution>]>
+retrieve projects where the title contains 'Project' and the description contains 'new'
+
+total_price = Product.objects.aggregate(total_price=Sum('price'))
+calculate the total price of all products
+
+>>> projects_with_task_count = Project.objects.annotate(task_count=Count('task'))
+>>> for project in projects_with_task_count: print(f"{project.title}: {project.task_count} tasks")
+... 
+Project - argue: 1 tasks
+Project - bad: 3 tasks
+Project - audience: 6 tasks
+Project - raise: 2 tasks
+Project - summer: 7 tasks
+Project - something: 0 tasks
+Project - none: 1 tasks
+Project - commercial: 3 tasks
+Project - safe: 4 tasks
+Project - mean: 0 tasks
+Project - especially: 1 tasks
+Project - force: 2 tasks
+Project - hospital: 4 tasks
+Project - director: 0 tasks
+Project - sense: 2 tasks
+Project - PM: 4 tasks
+Project - knowledge: 2 tasks
+Project - bag: 3 tasks
+Project - land: 5 tasks
+Project - all: 1 tasks
+Project - easy: 1 tasks
+Project - hold: 5 tasks
+Project - blue: 3 tasks
+Project - report: 1 tasks
+Project - then: 0 tasks
+Project - director: 3 tasks
+Project - course: 3 tasks
+Project - difference: 5 tasks
+Project - quite: 2 tasks
+Project - require: 1 tasks
+Project - fall: 5 tasks
+Project - attack: 4 tasks
+Project - above: 4 tasks
+Project - moment: 3 tasks
+Project - participant: 2 tasks
+Project - worry: 4 tasks
+Project - movie: 2 tasks
+Project - source: 2 tasks
+Project - star: 4 tasks
+Project - happen: 2 tasks
+Project - box: 2 tasks
+Project - anyone: 3 tasks
+Project - beautiful: 8 tasks
+Project - hit: 3 tasks
+Project - policy: 2 tasks
+Project - within: 2 tasks
+Project - manager: 5 tasks
+Project - product: 4 tasks
+Project - center: 2 tasks
+Project - behavior: 4 tasks
+Project - low: 2 tasks
+Project - item: 2 tasks
+Project - activity: 1 tasks
+Project - design: 3 tasks
+Project - leg: 3 tasks
+Project - leader: 4 tasks
+Project - ever: 4 tasks
+Project - painting: 4 tasks
+Project - reduce: 6 tasks
+Project - serious: 5 tasks
+Project - throughout: 8 tasks
+Project - loss: 5 tasks
+Project - number: 7 tasks
+Project - campaign: 6 tasks
+Project - lose: 5 tasks
+Project - bag: 1 tasks
+Project - face: 2 tasks
+Project - he: 1 tasks
+Project - money: 1 tasks
+Project - already: 2 tasks
+Project - these: 3 tasks
+Project - pattern: 7 tasks
+Project - court: 2 tasks
+Project - customer: 1 tasks
+Project - good: 2 tasks
+Project - sense: 3 tasks
+Project - bag: 5 tasks
+Project - nice: 3 tasks
+Project - even: 4 tasks
+Project - son: 3 tasks
+Project - they: 4 tasks
+Project - exactly: 2 tasks
+Project - environment: 3 tasks
+Project - should: 7 tasks
+Project - training: 0 tasks
+Project - meeting: 0 tasks
+Project - scientist: 1 tasks
+Project - trouble: 4 tasks
+Project - structure: 1 tasks
+Project - cause: 5 tasks
+Project - case: 4 tasks
+Project - language: 5 tasks
+Project - TV: 4 tasks
+Project - face: 2 tasks
+Project - throughout: 3 tasks
+Project - seek: 3 tasks
+Project - letter: 4 tasks
+Project - six: 0 tasks
+Project - prove: 2 tasks
+Project - street: 3 tasks
+Project - pick: 3 tasks
+Project - ground: 3 tasks
+Project - month: 5 tasks
+Project - respond: 3 tasks
+Project - manager: 2 tasks
+Project - year: 5 tasks
+Project - read: 1 tasks
+Project - concern: 2 tasks
+Project - focus: 7 tasks
+Project - window: 4 tasks
+Project - personal: 4 tasks
+Project - attorney: 4 tasks
+Project - lose: 4 tasks
+Project - then: 0 tasks
+Project - plant: 7 tasks
+Project - market: 6 tasks
+Project - education: 4 tasks
+Project - later: 2 tasks
+Project - a: 5 tasks
+Project - much: 3 tasks
+Project - expert: 3 tasks
+Project - significant: 2 tasks
+Project - thank: 2 tasks
+Project - school: 3 tasks
+Project - skin: 3 tasks
+Project - worry: 2 tasks
+Project - finish: 2 tasks
+Project - single: 1 tasks
+Project - million: 0 tasks
+Project - finish: 2 tasks
+Project - surface: 2 tasks
+Project - institution: 1 tasks
+Project - such: 2 tasks
+Project - hotel: 5 tasks
+Project - enough: 6 tasks
+Project - bad: 2 tasks
+Project - anything: 2 tasks
+Project - street: 1 tasks
+Project - account: 7 tasks
+Project - floor: 5 tasks
+Project - it: 3 tasks
+Project - politics: 1 tasks
+Project - girl: 2 tasks
+Project - job: 1 tasks
+Project - American: 2 tasks
+Project - quickly: 4 tasks
+Project - plan: 3 tasks
+Project - really: 4 tasks
+Project - good: 11 tasks
+Project - information: 4 tasks
