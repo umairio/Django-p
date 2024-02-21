@@ -1,10 +1,11 @@
 from django.shortcuts import render
-from django.http import HttpResponse
-from django.template import loader
 
 
-def home(request):
-    return render(request, 'home.html')
+def index(request):
+    return render(request, 'base.html')
 
-def home2(request):
-    return render(request, 'home2.html')
+def ibase(request):
+    return render(request, 'ibase.html')
+
+def contact(request):
+    return render(request, 'contact.html')

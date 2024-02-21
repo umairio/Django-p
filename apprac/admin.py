@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User, Profile, Project, Task, Document
+from .models import User, Profile, Project, Task, Document, ProfileProxy
 from django.http import HttpResponseRedirect
 from django.core import management
 from django.urls import path
@@ -26,7 +26,8 @@ class PhoneNumberFilter(admin.SimpleListFilter):
         value = self.value()
         if value:
             return queryset.filter(phone_no__startswith=value)
-
+        
+admin.site.register(User, UserAdmin)
     
 class ProfileAdmin(admin.ModelAdmin):
     change_list_template = "admin/profile_change_list.html"
@@ -49,7 +50,9 @@ class ProfileAdmin(admin.ModelAdmin):
            )
        ]
        return custom_urls + urls
-   
+
+admin.site.register(Profile, ProfileAdmin)
+
 class ProjectAdmin(admin.ModelAdmin):
     change_list_template = "admin/project_change_list.html"
     list_display = ['title', 'start_date', 'end_date']
@@ -67,7 +70,9 @@ class ProjectAdmin(admin.ModelAdmin):
            )
        ]
        return custom_urls + urls
- 
+
+admin.site.register(Project, ProjectAdmin)
+
 class TaskAdmin(admin.ModelAdmin):
     change_list_template = "admin/task_change_list.html"
     list_display = ['title', 'status', 'project']
@@ -86,6 +91,9 @@ class TaskAdmin(admin.ModelAdmin):
            )
        ]
        return custom_urls + urls
+   
+admin.site.register(Task, TaskAdmin)
+   
 class DocumentAdmin(admin.ModelAdmin):
     change_list_template = "admin/doc_change_list.html"
     list_display = ['name', 'version', 'project']
@@ -104,8 +112,11 @@ class DocumentAdmin(admin.ModelAdmin):
        ]
        return custom_urls + urls
    
-admin.site.register(User, UserAdmin)
-admin.site.register(Profile, ProfileAdmin)
-admin.site.register(Project, ProjectAdmin)
-admin.site.register(Task, TaskAdmin)
 admin.site.register(Document, DocumentAdmin)
+
+@admin.register(ProfileProxy)
+class ProfileProxyAdmin(admin.ModelAdmin):
+    
+    list_display = ('full_name', 'is_member_of_project', 'is_assigned_to_task') 
+    search_fields = ('user__name', 'role')
+    

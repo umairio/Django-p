@@ -32,8 +32,8 @@ class PhoneField(models.Field):
     def validate(self, value, model_instance):
         """Check if value consists only of valid number"""
         super().validate(value, model_instance)
-        ver_pattern = re.compile(r'^\+92+[0-9-]$')
-        match = ver_pattern.match(value)
+        phone_pattern = re.compile(r'^\+923[0-9]{9}$')
+        match = phone_pattern.match(value)
         if not bool(match):
             raise ValidationError(
                 _(
@@ -62,7 +62,21 @@ class Profile(models.Model):
     
     def __str__(self):
         return self.full_name
-    
+
+class ProfileProxy(Profile):
+    class Meta:
+        proxy = True
+
+    def is_assigned_to_task(self):
+        assigned_tasks = self.task_set.all()
+        return ', '.join(task.title for task in assigned_tasks) if assigned_tasks else None
+
+    def is_member_of_project(self):
+        member_of_projects = self.project_set.all()
+        return ', '.join(project.title for project in member_of_projects) if member_of_projects else None
+
+
+
 class Project(models.Model):
     title = models.CharField(max_length=50)
     description = models.TextField(blank=True)
