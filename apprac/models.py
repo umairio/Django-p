@@ -17,7 +17,34 @@ class User(models.Model):
         
     def __str__(self):
         return self.name
+
+class PhoneField(models.Field):
+                   
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
     
+    def get_prep_value(self, value):
+        return str(value)
+    
+    def db_type(self, connection):
+        return f"char({13})"
+    
+    def validate(self, value, model_instance):
+        """Check if value consists only of valid number"""
+        super().validate(value, model_instance)
+        ver_pattern = re.compile(r'^\+92+[0-9-]$')
+        match = ver_pattern.match(value)
+        if not bool(match):
+            raise ValidationError(
+                _(
+                    'Invalid contact No. format. Example: "+923123456789"'
+                ),
+                code="invalid",
+                params={"value": value},
+            )
+        
+fields.PhoneField = PhoneField 
+
 class Profile(models.Model):
     class Role(models.TextChoices):
         Manager  = 'manager'
@@ -25,7 +52,7 @@ class Profile(models.Model):
         Developer = 'developer'
         
     user = models.OneToOneField(User, verbose_name=("User Profile"), on_delete=models.CASCADE)
-    contact_no = models.IntegerField()
+    phone_no = PhoneField(max_length = 13)
     role = models.CharField(choices = Role.choices, default = Role.Developer)
     display_pic = models.ImageField(upload_to='image/', blank=True)
     
@@ -43,9 +70,6 @@ class Project(models.Model):
     end_date = models.DateField()
     team_member = models.ManyToManyField(Profile, verbose_name=("Team Member"))
     
-    class Meta:
-        ordering = ['project', 'status']
-        
     def __str__(self):
         return self.title
     
@@ -64,6 +88,10 @@ class Task(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     assignee = models.ManyToManyField(Profile)
     
+    
+    class Meta:
+        ordering = ['project', 'status']
+        
     @classmethod
     def get_qa_tasks(cls):
         return cls.objects.filter(status=Task.Status.Waiting_qa)
@@ -90,7 +118,7 @@ class VersionField(models.Field):
         return f"char({13})"
     
     def validate(self, value, model_instance):
-        """Check if value consists only of valid emails."""
+        """Check if value consists only of valid version."""
         super().validate(value, model_instance)
         ver_pattern = re.compile(r'^[vV]+[0-9-]+\.[0-9-]+\.[0-9-]+[a-zA-Z]$')
         match = ver_pattern.match(value)
@@ -109,16 +137,9 @@ fields.VersionField = VersionField
 class Document(models.Model):
     name = models.CharField(max_length=50)
     description = models.TextField(blank=True)
-    file = models.FileField(upload_to='file/', max_length=100)
+    file = models.FileField(upload_to='file/', max_length=100 ,null=True, blank=True)
     version = VersionField()
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     
     def __str__(self):
         return self.name
-    
-class Comment(models.Model):
-    text = models.TextField()
-    author = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
-    project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    task = models.ForeignKey(Task, on_delete=models.CASCADE)
