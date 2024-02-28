@@ -5,7 +5,6 @@ from rest_framework import routers
 
 
 router = routers.DefaultRouter()
-router.register(r'projects', ProjectViewSet)
 
 urlpatterns = [
    path('', index, name='index'),
@@ -16,4 +15,6 @@ urlpatterns = [
    path('api/login/', MyObtainTokenPairView.as_view(), name='token_obtain_pair'),
    path('api/logout/', TokenRefreshView.as_view(), name='token_refresh'),
    path('api/register/', RegisterView.as_view(), name='auth_register'),
+   path('api/projects/', ProjectView.as_view(), name='projects'),
+   path('api/projects/<int:pk>/', ProjectView.as_view(), name='projects'),
 ]
