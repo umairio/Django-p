@@ -11,22 +11,69 @@ from rest_framework.decorators import action
 from rest_framework_simplejwt.tokens import RefreshToken
 
 
-# "refresh": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcwOTIxNTEzMiwiaWF0IjoxNzA5MTI4NzMyLCJqdGkiOiJmYWI1MzY3NTY5OGQ0ODBhOWRhY2VlZWQwODk0ZTg4YiIsInVzZXJfaWQiOjEsInVzZXJuYW1lIjoidW1haXIifQ.9VNHK9S6QCUfvnXS_Lj1EjvRoVku19JE5aZK-mjnFVo",
-class RegisterView(generics.CreateAPIView):
-    queryset = User.objects.all()
-    permission_classes = (AllowAny,)
-    serializer_class = RegisterSerializer
+class TaskView(APIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = TaskSerializer
+    queryset = Task.objects.all()
+
+    def get(self, request, pk=None):
+        if pk is not None:
+            try:
+                task = Task.objects.get(id=pk)
+                serializer = TaskSerializer(task)
+                return Response(serializer.data)
+            except Exception as e:
+                return Response({"message": f"Task with id {pk} does not exist"})
+        else:
+            tasks = Task.objects.all()
+            serializers = TaskSerializer(tasks, many=True)
+            return Response(serializers.data)
+
+    def post(self, request):
+        serializer = TaskSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
+
+    def put(self, request, pk):
+        try:
+            task = Task.objects.get(id=pk)
+            serializer = TaskSerializer(task, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors)
+        except Exception as e:
+            return Response({"message": f"Task with id {pk} does not exist"})
+
+    def delete(self, request, pk):
+        try:
+            task = Task.objects.get(id=pk)
+            task.delete()
+            return Response({"message": f"Task {pk} deleted"})
+        except Exception as e:
+            return Response({"message": f"Task with id {pk} does not exist"})
 
 
-class MyObtainTokenPairView(TokenObtainPairView):
-    permission_classes = (AllowAny,)
-    serializer_class = MyTokenObtainPairSerializer
+class TaskAssignView(APIView):
+    def patch(self, request, pk):
+        try:
+            task = Task.objects.get(id=pk)
+            serializer = TaskSerializer(task, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors)
+        except Exception as e:
+            return Response({"message": f"Task with id {pk} does not exist"})
 
 
 class ProjectView(APIView):
     permission_classes = [IsAuthenticated]
     serializer_class = ProjectSerializer
     queryset = Project.objects.all()
+
     def get(self, request, pk=None):
         if pk is not None:
             try:
@@ -56,7 +103,7 @@ class ProjectView(APIView):
                 return Response(serializer.data)
             return Response(serializer.errors)
         except Exception as e:
-            return Response({"message": f"Project with id {pk} does not exist"}) 
+            return Response({"message": f"Project with id {pk} does not exist"})
 
     def delete(self, request, pk):
         try:
@@ -64,21 +111,40 @@ class ProjectView(APIView):
             project.delete()
             return Response({"message": f"Project {pk} deleted"})
         except Exception as e:
-            return Response({"message": f"Project with id {pk} does not exist"}) 
-                
+            return Response({"message": f"Project with id {pk} does not exist"})
+
+
+class RegisterView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    permission_classes = (AllowAny,)
+    serializer_class = RegisterSerializer
+
+
+class MyObtainTokenPairView(TokenObtainPairView):
+    permission_classes = (AllowAny,)
+    serializer_class = MyTokenObtainPairSerializer
+
+
 class LogoutView(APIView):
     def post(self, request):
-        refresh_token = request.data.get('refresh_token')
+        refresh_token = request.data.get("refresh_token")
 
         if not refresh_token:
-            return Response({'error': 'Refresh token is required.'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "Refresh token is required."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         try:
             token = RefreshToken(refresh_token)
             token.blacklist()
-            return Response({'message': 'Logout successful.'}, status=status.HTTP_200_OK)
+            return Response(
+                {"message": "Logout successful."}, status=status.HTTP_200_OK
+            )
         except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 def index(request):

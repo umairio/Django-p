@@ -70,7 +70,7 @@ Creating APIs for a Collaborative Project Management application involves defini
    
    - **Ticket 14:** Assign Task API
      - Endpoint: `/api/tasks/{task_id}/assign/`
-     - Method: POST
+     - Method: PATCH
      - Description: Allows project managers to assign a task to team members.
 
 **4. Document Management:**
