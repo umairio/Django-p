@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User, Profile, Project, Task, Document, ProfileProxy
+from .models import *
 from django.http import HttpResponseRedirect
 from django.core import management
 from django.urls import path
@@ -114,6 +114,10 @@ class DocumentAdmin(admin.ModelAdmin):
    
 admin.site.register(Document, DocumentAdmin)
 
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ['author', 'project', 'text', 'task']
+
+admin.site.register(Comment, CommentAdmin)
 @admin.register(ProfileProxy)
 class ProfileProxyAdmin(admin.ModelAdmin):
     

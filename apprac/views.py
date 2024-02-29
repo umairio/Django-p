@@ -56,7 +56,8 @@ class TaskView(APIView):
             return Response({"message": f"Task with id {pk} does not exist"})
 
 
-class TaskAssignView(APIView):
+class TaskAssignView(TaskView):
+
     def patch(self, request, pk):
         try:
             task = Task.objects.get(id=pk)
@@ -114,6 +115,96 @@ class ProjectView(APIView):
             return Response({"message": f"Project with id {pk} does not exist"})
 
 
+class DocumentView(APIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = DocumentSerializer
+    queryset = Document.objects.all()
+
+    def get(self, request, pk=None):
+        if pk is not None:
+            try:
+                document = Document.objects.get(id=pk)
+                serializer = DocumentSerializer(document)
+                return Response(serializer.data)
+            except Exception as e:
+                return Response({"message": f"Document with id {pk} does not exist"})
+        else:
+            documents = Document.objects.all()
+            serializers = DocumentSerializer(documents, many=True)
+            return Response(serializers.data)
+
+    def post(self, request):
+        serializer = DocumentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
+
+    def put(self, request, pk):
+        try:
+            document = Document.objects.get(id=pk)
+            serializer = DocumentSerializer(document, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors)
+        except Exception as e:
+            return Response({"message": f"Document with id {pk} does not exist"})
+
+    def delete(self, request, pk):
+        try:
+            document = Document.objects.get(id=pk)
+            document.delete()
+            return Response({"message": f"Document {pk} deleted"})
+        except Exception as e:
+            return Response({"message": f"Document with id {pk} does not exist"})
+
+
+class CommentView(APIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = CommentSerializer
+    queryset = Comment.objects.all()
+
+    def get(self, request, pk=None):
+        if pk is not None:
+            try:
+                comment = Comment.objects.get(id=pk)
+                serializer = CommentSerializer(comment)
+                return Response(serializer.data)
+            except Exception as e:
+                return Response({"message": f"Comment with id {pk} does not exist"})
+        else:
+            comments = Comment.objects.all()
+            serializers = CommentSerializer(comments, many=True)
+            return Response(serializers.data)
+
+    def post(self, request):
+        serializer = CommentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
+
+    def put(self, request, pk):
+        try:
+            comment = Comment.objects.get(id=pk)
+            serializer = CommentSerializer(comment, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors)
+        except Exception as e:
+            return Response({"message": f"Comment with id {pk} does not exist"})
+
+    def delete(self, request, pk):
+        try:
+            comment = Comment.objects.get(id=pk)
+            comment.delete()
+            return Response({"message": f"Comment {pk} deleted"})
+        except Exception as e:
+            return Response({"message": f"Comment with id {pk} does not exist"})
+
+
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
     permission_classes = (AllowAny,)
@@ -127,16 +218,16 @@ class MyObtainTokenPairView(TokenObtainPairView):
 
 class LogoutView(APIView):
     def post(self, request):
-        refresh_token = request.data.get("refresh_token")
+        refresh = request.data.get("refresh")
 
-        if not refresh_token:
+        if not refresh:
             return Response(
                 {"error": "Refresh token is required."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         try:
-            token = RefreshToken(refresh_token)
+            token = RefreshToken(refresh)
             token.blacklist()
             return Response(
                 {"message": "Logout successful."}, status=status.HTTP_200_OK

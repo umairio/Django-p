@@ -21,4 +21,9 @@ urlpatterns = [
    path('api/tasks/', TaskView.as_view(), name='tasks'),
    path('api/tasks/<int:pk>/', TaskView.as_view(), name='tasks'),
    path('api/tasks/<int:pk>/assign/', TaskAssignView.as_view(), name='tasks'),
+   path('api/documents/', DocumentView.as_view(), name='documents'),
+   path('api/documents/<int:pk>/', DocumentView.as_view(), name='documents'),
+   path('api/comments/', CommentView.as_view(), name='comments'),
+   path('api/comments/<int:pk>/', CommentView.as_view(), name='comments'),
+   
 ]

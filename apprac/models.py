@@ -166,3 +166,13 @@ class Document(models.Model):
 
     def __str__(self):
         return self.name
+
+class Comment(models.Model):
+    text = models.TextField()
+    author = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    task = models.ForeignKey(Task, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.project.title+self.task.title
