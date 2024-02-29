@@ -5,11 +5,10 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.views import APIView
 from django.contrib.auth.models import User
 from .serializers import *
-from rest_framework import generics
-from rest_framework import viewsets
+from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
-
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 # "refresh": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcwOTIxNTEzMiwiaWF0IjoxNzA5MTI4NzMyLCJqdGkiOiJmYWI1MzY3NTY5OGQ0ODBhOWRhY2VlZWQwODk0ZTg4YiIsInVzZXJfaWQiOjEsInVzZXJuYW1lIjoidW1haXIifQ.9VNHK9S6QCUfvnXS_Lj1EjvRoVku19JE5aZK-mjnFVo",
@@ -67,6 +66,19 @@ class ProjectView(APIView):
         except Exception as e:
             return Response({"message": f"Project with id {pk} does not exist"}) 
                 
+class LogoutView(APIView):
+    def post(self, request):
+        refresh_token = request.data.get('refresh_token')
+
+        if not refresh_token:
+            return Response({'error': 'Refresh token is required.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+            return Response({'message': 'Logout successful.'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 def index(request):
