@@ -1,7 +1,9 @@
-from django.core.management.base import BaseCommand
-from apprac.models import User, Profile
-from faker import Faker
 import random
+
+from django.core.management.base import BaseCommand
+from faker import Faker
+
+from apprac.models import Profile, User
 
 fake = Faker()
 class Command(BaseCommand):

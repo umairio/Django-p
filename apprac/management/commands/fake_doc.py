@@ -1,10 +1,12 @@
-from django.core.management.base import BaseCommand
-from django.contrib.auth.models import User
-from apprac.models import Project, Document
-from faker import Faker
 import random
-from django.core.files import File
 from io import BytesIO
+
+from django.contrib.auth.models import User
+from django.core.files import File
+from django.core.management.base import BaseCommand
+from faker import Faker
+
+from apprac.models import Document, Project
 
 fake = Faker()
 

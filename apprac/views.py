@@ -1,14 +1,15 @@
-from django.shortcuts import render
-from .serializers import MyTokenObtainPairSerializer
-from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework.views import APIView
 from django.contrib.auth.models import User
-from .serializers import *
+from django.shortcuts import render
 from rest_framework import generics, status
+from rest_framework.decorators import action, api_view
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.decorators import action
+from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import TokenObtainPairView
+
+from .serializers import *
+from .serializers import MyTokenObtainPairSerializer
 
 
 class TaskView(APIView):
@@ -56,18 +57,21 @@ class TaskView(APIView):
             return Response({"message": f"Task with id {pk} does not exist"})
 
 
-class TaskAssignView(TaskView):
-
-    def patch(self, request, pk):
-        try:
-            task = Task.objects.get(id=pk)
-            serializer = TaskSerializer(task, data=request.data, partial=True)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data)
-            return Response(serializer.errors)
-        except Exception as e:
-            return Response({"message": f"Task with id {pk} does not exist"})
+@api_view(["PATCH"])
+def TaskAssignView(request, pk=None):
+    if pk is None:
+        return Response(
+            {"message": "Please provide task id"}, status=status.HTTP_400_BAD_REQUEST
+        )
+    try:
+        task = Task.objects.get(id=pk)
+        serializer = TaskSerializer(task, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
+    except Exception as e:
+        return Response({"message": f"Task with id {e} does not exist"})
 
 
 class ProjectView(APIView):

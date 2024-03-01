@@ -1,8 +1,8 @@
-from django.urls import path, include
-from .views import *
-from rest_framework_simplejwt.views import TokenRefreshView
+from django.urls import include, path
 from rest_framework import routers
+from rest_framework_simplejwt.views import TokenRefreshView
 
+from .views import *
 
 router = routers.DefaultRouter()
 
@@ -20,10 +20,9 @@ urlpatterns = [
    path('api/projects/<int:pk>/', ProjectView.as_view(), name='projects'),
    path('api/tasks/', TaskView.as_view(), name='tasks'),
    path('api/tasks/<int:pk>/', TaskView.as_view(), name='tasks'),
-   path('api/tasks/<int:pk>/assign/', TaskAssignView.as_view(), name='tasks'),
+   path('api/tasks/<int:pk>/assign/', TaskAssignView, name='tasks'),
    path('api/documents/', DocumentView.as_view(), name='documents'),
    path('api/documents/<int:pk>/', DocumentView.as_view(), name='documents'),
    path('api/comments/', CommentView.as_view(), name='comments'),
    path('api/comments/<int:pk>/', CommentView.as_view(), name='comments'),
-   
 ]

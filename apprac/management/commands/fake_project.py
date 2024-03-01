@@ -1,11 +1,12 @@
 # Standard Library Imports
-from datetime import date, timedelta
-from django.core.management import call_command
-from faker import Faker
-from django.core.management.base import BaseCommand
-from apprac.models import Profile, Project
 import random
+from datetime import date, timedelta
 
+from django.core.management import call_command
+from django.core.management.base import BaseCommand
+from faker import Faker
+
+from apprac.models import Profile, Project
 
 fake = Faker()
 

@@ -1,8 +1,8 @@
-from django.db import models
-from django.core.exceptions import ValidationError
-from django.db.models import fields
-from django.utils import timezone
 import re
+
+from django.core.exceptions import ValidationError
+from django.db import models
+from django.db.models import fields
 from django.utils.translation import gettext as _
 
 
@@ -120,9 +120,6 @@ class Task(models.Model):
     def is_valid_status(status):
         return status in [Task.Status.Open, Task.Status.Review, Task.Status.Working]
 
-    class Meta:
-        ordering = ["status"]
-
     def __str__(self):
         return self.title
 
@@ -167,6 +164,7 @@ class Document(models.Model):
     def __str__(self):
         return self.name
 
+
 class Comment(models.Model):
     text = models.TextField()
     author = models.ForeignKey(Profile, on_delete=models.CASCADE)
@@ -175,4 +173,4 @@ class Comment(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.project.title+self.task.title
+        return self.project.title + self.task.title

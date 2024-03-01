@@ -1,9 +1,10 @@
-from django.core.management.base import BaseCommand
-from apprac.models import Profile, Project, Task
-from django.contrib.auth.models import User
-from faker import Faker
 import random
 
+from django.contrib.auth.models import User
+from django.core.management.base import BaseCommand
+from faker import Faker
+
+from apprac.models import Profile, Project, Task
 
 fake = Faker()
 
