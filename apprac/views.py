@@ -5,39 +5,36 @@ from rest_framework.decorators import action, api_view
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.viewsets import ViewSet, ModelViewSet
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
+from django.shortcuts import get_object_or_404
 
 from .serializers import *
 from .serializers import MyTokenObtainPairSerializer
 
 
-class TaskView(APIView):
-    permission_classes = [IsAuthenticated]
-    serializer_class = TaskSerializer
-    queryset = Task.objects.all()
+class TaskViewSet(ViewSet):
+    def retrieve(self, request, pk=None):
+        queryset = Task.objects.all()
+        task = get_object_or_404(queryset, pk=pk)
+        serializer = TaskSerializer(task)
+        return Response(serializer.data)
+    
+    def list(self, request):
+        queryset = Task.objects.all()
+        serializer = TaskSerializer(queryset, many=True)
+        return Response(serializer.data)
 
-    def get(self, request, pk=None):
-        if pk is not None:
-            try:
-                task = Task.objects.get(id=pk)
-                serializer = TaskSerializer(task)
-                return Response(serializer.data)
-            except Exception as e:
-                return Response({"message": f"Task with id {pk} does not exist"})
-        else:
-            tasks = Task.objects.all()
-            serializers = TaskSerializer(tasks, many=True)
-            return Response(serializers.data)
 
-    def post(self, request):
+    def create(self, request):
         serializer = TaskSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors)
 
-    def put(self, request, pk):
+    def update(self, request, pk):
         try:
             task = Task.objects.get(id=pk)
             serializer = TaskSerializer(task, data=request.data)
@@ -48,7 +45,7 @@ class TaskView(APIView):
         except Exception as e:
             return Response({"message": f"Task with id {pk} does not exist"})
 
-    def delete(self, request, pk):
+    def destroy(self, request, pk):
         try:
             task = Task.objects.get(id=pk)
             task.delete()

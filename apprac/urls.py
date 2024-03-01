@@ -5,6 +5,8 @@ from rest_framework_simplejwt.views import TokenRefreshView
 from .views import *
 
 router = routers.DefaultRouter()
+router.register(r"tasks", TaskViewSet, basename="tasks")
+
 
 urlpatterns = [
    path('', index, name='index'),
@@ -18,8 +20,6 @@ urlpatterns = [
    path('api/logout/', LogoutView.as_view(), name='logout'),
    path('api/projects/', ProjectView.as_view(), name='projects'),
    path('api/projects/<int:pk>/', ProjectView.as_view(), name='projects'),
-   path('api/tasks/', TaskView.as_view(), name='tasks'),
-   path('api/tasks/<int:pk>/', TaskView.as_view(), name='tasks'),
    path('api/tasks/<int:pk>/assign/', TaskAssignView, name='tasks'),
    path('api/documents/', DocumentView.as_view(), name='documents'),
    path('api/documents/<int:pk>/', DocumentView.as_view(), name='documents'),

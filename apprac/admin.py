@@ -6,7 +6,6 @@ from django.urls import path
 from .models import *
 
 
-@admin.register(Profile)
 class UserAdmin(admin.ModelAdmin):
     change_list_template = "admin/profile_change_list.html"
     list_display = ["name", "active"]
