@@ -1,67 +1,58 @@
-from django.db import models
-from django.core.exceptions import ValidationError
-from django.db.models import fields
-from django.utils import timezone
 import re
+from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+from django.db import models
+from django.db.models import fields
 from django.utils.translation import gettext as _
 
 
 
-
-class User(models.Model):
-    name = models.CharField(max_length=50)
-    active = models.BooleanField()
-    
-    class Meta:
-        db_table = 'user_table'
-        
-    def __str__(self):
-        return self.name
-
 class PhoneField(models.Field):
-                   
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-    
+
     def get_prep_value(self, value):
         return str(value)
-    
+
     def db_type(self, connection):
         return f"char({13})"
-    
+
     def validate(self, value, model_instance):
         """Check if value consists only of valid number"""
         super().validate(value, model_instance)
-        phone_pattern = re.compile(r'^\+923[0-9]{9}$')
+        phone_pattern = re.compile(r"^\+923[0-9]{9}$")
         match = phone_pattern.match(value)
         if not bool(match):
             raise ValidationError(
-                _(
-                    'Invalid contact No. format. Example: "+923123456789"'
-                ),
+                _('Invalid contact No. format. Example: "+923123456789"'),
                 code="invalid",
                 params={"value": value},
             )
-        
-fields.PhoneField = PhoneField 
+
+
+fields.PhoneField = PhoneField
+
 
 class Profile(models.Model):
     class Role(models.TextChoices):
-        Manager  = 'manager'
-        QA = 'qa'
-        Developer = 'developer'
-        
-    user = models.OneToOneField(User, verbose_name=("User Profile"), on_delete=models.CASCADE)
-    phone_no = PhoneField(max_length = 13)
-    role = models.CharField(choices = Role.choices, default = Role.Developer)
-    display_pic = models.ImageField(upload_to='image/', blank=True)
-    
+        Manager = "manager"
+        QA = "qa"
+        Developer = "developer"
+
+    user = models.OneToOneField(
+        User, verbose_name=("User Profile"), on_delete=models.CASCADE
+    )
+    phone_no = PhoneField(max_length=13, blank=True)
+    role = models.CharField(choices=Role.choices, default=Role.Developer)
+    display_pic = models.ImageField(upload_to="image/", blank=True)
     @property
     def full_name(self):
-        return f'{self.user.name} - {self.role}'
-    
+        return f"{self.user.username} - {self.role}"
+
     def __str__(self):
         return self.full_name
+
 
 class ProfileProxy(Profile):
     class Meta:
@@ -69,12 +60,17 @@ class ProfileProxy(Profile):
 
     def is_assigned_to_task(self):
         assigned_tasks = self.task_set.all()
-        return ', '.join(task.title for task in assigned_tasks) if assigned_tasks else None
+        return (
+            ", ".join(task.title for task in assigned_tasks) if assigned_tasks else None
+        )
 
     def is_member_of_project(self):
         member_of_projects = self.project_set.all()
-        return ', '.join(project.title for project in member_of_projects) if member_of_projects else None
-
+        return (
+            ", ".join(project.title for project in member_of_projects)
+            if member_of_projects
+            else None
+        )
 
 
 class Project(models.Model):
@@ -83,58 +79,55 @@ class Project(models.Model):
     start_date = models.DateField(auto_now_add=True)
     end_date = models.DateField()
     team_member = models.ManyToManyField(Profile, verbose_name=("Team Member"))
-    
+
     def __str__(self):
         return self.title
-    
+
 
 class Task(models.Model):
     class Status(models.TextChoices):
-        Open  = 'Open'
-        Review = 'Review'
-        Working = 'Working'
-        Awaiting_release = 'Awaiting_release'
-        Waiting_qa = 'Waiting_qa'
-        
+        Open = "Open"
+        Review = "Review"
+        Working = "Working"
+        Awaiting_release = "Awaiting_release"
+        Waiting_qa = "Waiting_qa"
+
     title = models.CharField(max_length=50)
     description = models.TextField(blank=True)
-    status = models.CharField(choices = Status.choices, default = Status.Open)
+    status = models.CharField(choices=Status.choices, default=Status.Open)
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     assignee = models.ManyToManyField(Profile)
-    
-    
+
     class Meta:
-        ordering = ['project', 'status']
-        
+        ordering = ["project", "status"]
+
     @classmethod
     def get_qa_tasks(cls):
         return cls.objects.filter(status=Task.Status.Waiting_qa)
-    
+
     @staticmethod
     def is_valid_status(status):
         return status in [Task.Status.Open, Task.Status.Review, Task.Status.Working]
-    
-    class Meta:
-        ordering = ['status']
-    
+
     def __str__(self):
         return self.title
-    
+
+
 class VersionField(models.Field):
-                   
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-    
+
     def get_prep_value(self, value):
         return str(value)
-    
+
     def db_type(self, connection):
         return f"char({13})"
-    
+
     def validate(self, value, model_instance):
         """Check if value consists only of valid version."""
         super().validate(value, model_instance)
-        ver_pattern = re.compile(r'^[vV]+[0-9-]+\.[0-9-]+\.[0-9-]+[a-zA-Z]$')
+        ver_pattern = re.compile(r"^[vV]+[0-9-]+\.[0-9-]+\.[0-9-]+[a-zA-Z]$")
         match = ver_pattern.match(value)
         if not bool(match):
             raise ValidationError(
@@ -145,15 +138,28 @@ class VersionField(models.Field):
                 code="invalid",
                 params={"value": value},
             )
-        
+
+
 fields.VersionField = VersionField
-   
+
+
 class Document(models.Model):
     name = models.CharField(max_length=50)
     description = models.TextField(blank=True)
-    file = models.FileField(upload_to='file/', max_length=100 ,null=True, blank=True)
+    file = models.FileField(upload_to="file/", max_length=100, null=True, blank=True)
     version = VersionField()
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    
+
     def __str__(self):
         return self.name
+
+
+class Comment(models.Model):
+    text = models.TextField()
+    author = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    task = models.ForeignKey(Task, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.project.title + self.task.title
