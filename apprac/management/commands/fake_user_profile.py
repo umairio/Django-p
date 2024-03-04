@@ -2,8 +2,8 @@ import random
 
 from django.core.management.base import BaseCommand
 from faker import Faker
-
-from apprac.models import Profile, User
+from django.contrib.auth.models import User
+from apprac.models import Profile
 
 fake = Faker()
 class Command(BaseCommand):
@@ -11,8 +11,8 @@ class Command(BaseCommand):
     def handle(self, *args, **option):
         for _ in range(10):
             u = User.objects.create(
-                name = fake.name(),
-                active = True
+                username = fake.name(),
+                password = 'admin'
             )
             Profile.objects.create(
                 user = u,

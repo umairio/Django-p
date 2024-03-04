@@ -6,6 +6,8 @@ from .views import *
 
 router = routers.DefaultRouter()
 router.register(r"tasks", TaskViewSet, basename="tasks")
+router.register(r"projects", ProjectViewSet, basename="projects")
+# router.register(r"comments", CommentViewSet, basename="comments")
 
 
 urlpatterns = [
@@ -18,8 +20,6 @@ urlpatterns = [
    path('api/login/', MyObtainTokenPairView.as_view(), name='token_obtain_pair'),
    path('api/login/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
    path('api/logout/', LogoutView.as_view(), name='logout'),
-   path('api/projects/', ProjectView.as_view(), name='projects'),
-   path('api/projects/<int:pk>/', ProjectView.as_view(), name='projects'),
    path('api/tasks/<int:pk>/assign/', TaskAssignView, name='tasks'),
    path('api/documents/', DocumentView.as_view(), name='documents'),
    path('api/documents/<int:pk>/', DocumentView.as_view(), name='documents'),

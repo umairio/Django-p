@@ -30,9 +30,6 @@ class PhoneNumberFilter(admin.SimpleListFilter):
             return queryset.filter(phone_no__startswith=value)
 
 
-admin.site.register(User, UserAdmin)
-
-
 class ProfileAdmin(admin.ModelAdmin):
     change_list_template = "admin/profile_change_list.html"
     list_display = ["user", "role", "phone_no"]

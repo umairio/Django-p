@@ -125,21 +125,4 @@ Creating APIs for a Collaborative Project Management application involves defini
      - Method: DELETE
      - Description: Allows users to delete their comments.
 
-**6. Timeline Events:**
-   - **Ticket 25:** List Timeline Events API
-     - Endpoint: `/api/timeline/`
-     - Method: GET
-     - Description: Retrieves a list of timeline events for a project.
-
-**7. Notifications:**
-   - **Ticket 26:** Notifications API
-     - Endpoint: `/api/notifications/`
-     - Method: GET
-     - Description: Retrieves a list of notifications for the authenticated user.
-   
-   - **Ticket 27:** Mark Notification as Read API
-     - Endpoint: `/api/notifications/{notification_id}/mark_read/`
-     - Method: PUT
-     - Description: Allows users to mark a notification as read.
-
 These API endpoints cover the core functionalities of a Collaborative Project Management application. Depending on your project's specific requirements, you may need to extend or modify these endpoints. Additionally, consider implementing pagination, filtering, and authentication checks for each endpoint to enhance the API's usability and security.

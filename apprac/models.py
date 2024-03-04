@@ -1,20 +1,10 @@
 import re
-
+from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import fields
 from django.utils.translation import gettext as _
 
-
-class User(models.Model):
-    name = models.CharField(max_length=50)
-    active = models.BooleanField()
-
-    class Meta:
-        db_table = "user_table"
-
-    def __str__(self):
-        return self.name
 
 
 class PhoneField(models.Field):
@@ -53,13 +43,12 @@ class Profile(models.Model):
     user = models.OneToOneField(
         User, verbose_name=("User Profile"), on_delete=models.CASCADE
     )
-    phone_no = PhoneField(max_length=13)
+    phone_no = PhoneField(max_length=13, blank=True)
     role = models.CharField(choices=Role.choices, default=Role.Developer)
     display_pic = models.ImageField(upload_to="image/", blank=True)
-
     @property
     def full_name(self):
-        return f"{self.user.name} - {self.role}"
+        return f"{self.user.username} - {self.role}"
 
     def __str__(self):
         return self.full_name

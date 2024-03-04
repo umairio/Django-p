@@ -1,4 +1,3 @@
-from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
@@ -59,32 +58,27 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         return token
 
 
-class RegisterSerializer(serializers.ModelSerializer):
+class RegisterSerializer(serializers.Serializer):
+    username = serializers.CharField(required=True)
     password = serializers.CharField(
         write_only=True, required=True, validators=[validate_password]
     )
     password2 = serializers.CharField(write_only=True, required=True)
+    role = serializers.ChoiceField(choices= Profile.Role.choices, default=Profile.Role.Developer)
 
     class Meta:
-        model = get_user_model()
-        fields = ("username", "password", "password2")
-        extra_kwargs = {
-            "username": {
-                "validators": [UniqueValidator(queryset=get_user_model().objects.all())]
-            },
-        }
+        fields = ("username", "password", "password2", "role")
 
     def validate(self, attrs):
         if attrs["password"] != attrs["password2"]:
             raise serializers.ValidationError(
                 {"password": "Password fields didn't match."}
             )
-
         return attrs
 
     def create(self, validated_data):
-        user = get_user_model().objects.create_user(
-            username=validated_data["username"], password=validated_data["password"]
+        user = User.objects.create_user(
+            username=validated_data.pop("username"), password=validated_data.pop("password")
         )
-
+        profile = Profile.objects.create(user=user, role=validated_data.pop("role"))
         return user
